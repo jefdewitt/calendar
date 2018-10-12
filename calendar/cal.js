@@ -1,54 +1,29 @@
-import { CalendarService } from './../services/calendar.service';
-import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 
-@Component({
-  selector: 'app-calendar',
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
-})
-export class CalendarComponent implements OnInit {
+var todayDate = new Date();
+var curMonth = todayDate.getMonth() + 1;
+var curYear = todayDate.getFullYear();
+var twelveMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+   'August', 'September', 'October', 'November', 'December'];
+  monthString = twelveMonths[curMonth - 1];
 
-  constructor(private calendarService: CalendarService, private elementRef: ElementRef) { }
-
-  ngOnInit() {
-    this.addCalToPage();
-  }
-
-  public addCalToPage() {
-    const cal = this.elementRef.nativeElement.querySelector('.calendar');
-    cal.innerHTML = this.calendarService.addCalToPage();
-    // this.calendarService.populateCalendarDropdown(this.twelveMonths, this.curYear);
-  }
-
+function addCalToPage() {
+  console.log('todayDate.getFullYear()', todayDate.getFullYear());
+  const cal = document.querySelector('.calendar');
+  cal.innerHTML = buildCal();
+  // this.calendarService.populateCalendarDropdown(this.twelveMonths, this.curYear);
 }
 
-import { Injectable } from '@angular/core';
-
-@Injectable({
-  providedIn: 'root'
-})
-
-export class CalendarService {
-
-  selector: any;
-  dateFromCal: string;
-  minutesFromCal: string;
-  hoursSelected: boolean;
-  options: Array<any>;
-  public todayDate: Date = new Date();
-  public curMonth: number = this.todayDate.getMonth() + 1;
-  public curYear: number = this.todayDate.getFullYear();
-  public twelveMonths: any = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-   'August', 'September', 'October', 'November', 'December'];
-  monthString = this.twelveMonths[this.curMonth - 1];
-
-  constructor() { }
+//   selector: any;
+//   dateFromCal: string;
+//   minutesFromCal: string;
+//   hoursSelected: boolean;
+//   options: Array<any>;
 
 
-  public addCalToPage() {
+
+  // function addCalToPage() {
     // try {
-      console.log('addCalToPage called');
-      this.buildCal();
+      // buildCal();
     //   const calendar = <HTMLInputElement> document.getElementById('calendar');
     //   // Builds calendar & populates option elements
     //   calendar.innerHTML = this.buildCal(this.todayDate, this.curMonth, this.curYear, this.twelveMonths);
@@ -58,7 +33,7 @@ export class CalendarService {
     // catch(error) {
     //   console.log('Unable to add calendar to the page ' + error.message);
     // }
-  }
+  // }
 
   /**
    *
@@ -74,13 +49,13 @@ export class CalendarService {
    * initials shown atop the 7 columns of the calendar.
    */
 
-  public buildCal() {
+   function buildCal() {
     try {
-      const lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      const firstDayOfYear = new Date(this.curYear, this.curMonth - 1, 1);
-      const dayOne = firstDayOfYear.getDay() + 1;
-      const scanForToday =
-        (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ? this.todayDate.getDate() : 0 ;
+      var lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      var firstDayOfYear = new Date(curYear, curMonth - 1, 1);
+      var dayOne = firstDayOfYear.getDay() + 1;
+      var scanForToday =
+        (curYear === todayDate.getFullYear() && curMonth === todayDate.getMonth() + 1 ) ? todayDate.getDate() : 0 ;
 
       // Find the number of days for February
       lastDayOfMonths[1] =
@@ -91,8 +66,8 @@ export class CalendarService {
       let table =
         '<div class="main"><table class="" cols="7"' +
         'cellpadding="0" border="0" cellspacing="0"><tr align="center">' +
-        '<td colspan="7" align="center" class="">' + this.twelveMonths[this.curMonth - 1] +
-        ' - ' + this.curYear + '</td></tr><tr align="center">';
+        '<td colspan="7" align="center" class="">' + twelveMonths[curMonth - 1] +
+        ' - ' + curYear + '</td></tr><tr align="center">';
 
       let daysOfWeek;
       for (daysOfWeek = 0; daysOfWeek < 7; daysOfWeek++) {
@@ -103,23 +78,23 @@ export class CalendarService {
 
       for (let i = 1; i <= 42; i++) {
 
-          let x = ( (i - dayOne >= 0) && ( i - dayOne < lastDayOfMonths[this.curMonth - 1]) ) ? i - dayOne + 1 : '&nbsp;';
+          let x = ( (i - dayOne >= 0) && ( i - dayOne < lastDayOfMonths[curMonth - 1]) ) ? i - dayOne + 1 : '&nbsp;';
 
           if (x === scanForToday) {
             x = '<span class="today">' + x + '</span>';
           }
 
-          let displayMonth: any = this.curMonth;
+          let displayMonth = curMonth;
           if (displayMonth < 10) {
             displayMonth = '0' + displayMonth;
           }
 
-          let displayDay = ( (i - dayOne >= 0) && (i - dayOne < lastDayOfMonths[this.curMonth - 1]) ) ? i - dayOne + 1 : '&nbsp;';
+          let displayDay = ( (i - dayOne >= 0) && (i - dayOne < lastDayOfMonths[curMonth - 1]) ) ? i - dayOne + 1 : '&nbsp;';
           if (displayDay < 10) {
             displayDay = '0' + displayDay;
           }
 
-          table += '<td id="' + this.curYear + '-' + displayMonth + '-' + displayDay + '" class="days">' + x + '</td>';
+          table += '<td id="' + curYear + '-' + displayMonth + '-' + displayDay + '" class="days">' + x + '</td>';
           if ( ((i) % 7 === 0) && (i < 36) ) {
             table += '</tr><tr align="center">';
           }
@@ -140,7 +115,7 @@ export class CalendarService {
    * calendar dropdown menu.
    */
 
-  populateCalendarDropdown(twelveMonths, curYear) {
+  function populateCalendarDropdown(twelveMonths, curYear) {
     // try {
     //   this.options = [];
     //   for (let i=0; i<12; i++) {//display option for 12 months of the year
@@ -154,7 +129,7 @@ export class CalendarService {
     // }
   }
 
-  resetCheckboxes() {
+  function resetCheckboxes() {
     // let minuteCheckbox = <HTMLInputElement> document.getElementById("minutes");
     // let hourCheckbox = <HTMLInputElement> document.getElementById("hours");
     // minuteCheckbox.checked = true;
@@ -162,7 +137,7 @@ export class CalendarService {
   }
 
   // Rebuild calendar when a new month is selected from the dropdown
-  updateCalendarMonth($event) {
+  function updateCalendarMonth($event) {
     // try {
     //   var theMonth = parseInt($event.target.selectedIndex) + 1;
     //   var updatedMonth=this.buildCal(this.todayDate, theMonth, this.curYear, this.twelveMonths);
@@ -176,7 +151,7 @@ export class CalendarService {
   }
 
   // Add a span that contains the time completed for the date displayed
-  addDateSpan() {
+  function addDateSpan() {
   //   try {
   //     let calendarMenu = <HTMLInputElement> document.getElementById("calendar-menu");
   //     if (calendarMenu) {
@@ -203,5 +178,6 @@ export class CalendarService {
   //       console.log('Unable to add span to calendar cells ' + error.message);
   //     }
   }
-}
+
+  addCalToPage();
 
