@@ -1,0 +1,11 @@
+<div class="date-picker">
+    <i class="icon--arrow-left"(click)="updateWeek(false)"></i>
+    <div class="date" *ngFor="let date of weekCalendar" (click)="selectDate(date)" [ngClass]="{'is-active': isSelectedDate(date)}">
+        <!-- use the class 'not-available' to show a blurred out date for those that don't have any information for them-->
+        <p class="">
+            <span class="day">{{getDayName(date)}}</span><br>
+            <span class="day-date">{{date.day}}</span>
+        </p>
+    </div>
+    <i class="icon--arrow-right" (click)="updateWeek(true)"></i>
+</div>

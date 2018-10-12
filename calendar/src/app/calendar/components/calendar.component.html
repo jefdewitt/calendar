@@ -1,0 +1,63 @@
+<ng-template cdk-portal #datePicker="cdkPortal">
+    <cdux-datepicker-lite *ngIf="isDatepickerVisible" [selectedDate]="calendarDate" (change)="changeDay($event)"></cdux-datepicker-lite>
+</ng-template>
+<div class="race-schedule-calendar">
+    <div class="header">
+        <h1 class="header-title">
+            Racing Calendar
+        </h1>
+        <h1 class="time-disclaimer">
+            All times are Eastern
+        </h1>
+    </div>
+    <div class="date-header">
+        <h1 class="date-range">
+            {{ weekRange }}
+        </h1>
+        <!-- On the calendar-button below add/remove the 'is-active' class  -->
+        <div class="calendar-button " [ngClass]="{'is-active' : isDatepickerVisible}" (click)="toggleDatepicker()"><div class="icon"></div></div>
+    </div>
+    <cdux-week-bar [selectedDate]="calendarDate"
+                   [weekCalendar]="weekCalendar"
+                   (weekChange)="changeWeek($event)"
+                   (dayChange)="changeDay($event)"></cdux-week-bar>
+    <div class="schedule-header" *ngIf="postTimeCalendars?.length > 0">
+        <div class="time">TIME</div>
+        <div class="track">TRACK</div>
+    </div>
+    <div class="schedule">
+        <!--Post Times-->
+        <!--add the class 'alt' to 'schedule-row' to alternate background colors-->
+        <div class="schedule-row" *ngFor="let calendar of postTimeCalendars; let odd = odd" [ngClass]="{alt: odd}">
+            <div class="time-row" [ngClass]="isPastDay ? 'past' : isToteDay ? 'present' : 'future'" (click)="isPastDay && calendar.calendarEvents.length > 0 ? resultsNavigate(calendar.calendarEvents[0]) : false">
+                <div class="time" [ngClass]="isPastDay ? 'official' : 'post-time'">
+                    <div>{{ isPastDay ? 'Official' : ( calendar.label | formatPostTime ) }}</div>
+                </div>
+            </div>
+            <div class="track-row">
+                <!--Tracks-->
+                <div class="track-info" *ngFor="let calendarEvent of calendar.calendarEvents" [ngClass]="isPastDay ? 'past' : isToteDay ? 'present' : 'future'" (click)="isPastDay ? resultsNavigate(calendarEvent) : false">
+                    <div class="track-name">{{calendarEvent.meetName}} <span *ngIf="calendarEvent.trackType !== trackType.TBRED">({{calendarEvent.trackType | slice:0:1 }})</span>  </div>
+                    <div class="bet-now-container" *ngIf="isToteDay">
+                        <div class="bet-now" (click)="programNavigate(calendarEvent)">
+                            <h2 [cduxLogClick]="eventClickType.CALENDAR_BET_NOW">Bet Now</h2>
+                        </div>
+                        <!--Track Carryovers-->
+                        <div class="pick-amount" *ngFor="let carryover of calendarEvent.carryovers" [cduxLogClick]="eventClickType.CALENDAR_CARRYOVER">
+                            <h2>{{carryover.amount | currency:'USD':'symbol-narrow'}} {{carryover.wagerType}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *cduxMediaToggle="'desk-to-phone'" [cdkPortalOutlet]="calendarRef"></div>
+    </div>
+    <div class="calendar-error-message" *ngIf="!postTimeCalendars || postTimeCalendars.length === 0">
+        <p *ngIf="!postTimeCalendars">The calendar for {{calendarDate | date: 'longDate'}} is currently unavailable.
+            <span>Please try<a (click)="assignCalendarEvents(calendarDate)"> again</a>.</span>
+        </p>
+        <p *ngIf="postTimeCalendars?.length === 0">
+            <span>There {{ isPastDay ? 'were' : 'are' }} no events scheduled for {{calendarDate | date: 'longDate'}}.</span>
+        </p>
+    </div>
+</div>
