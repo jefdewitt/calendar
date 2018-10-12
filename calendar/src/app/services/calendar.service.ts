@@ -11,10 +11,10 @@ export class CalendarService {
   minutesFromCal: string;
   hoursSelected: boolean;
   options: Array<any>;
-  todayDate: Date = new Date();
-  curMonth: number = this.todayDate.getMonth() + 1;
-  curYear: number = this.todayDate.getFullYear();
-  twelveMonths: any = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+  public todayDate: Date = new Date();
+  public curMonth: number = this.todayDate.getMonth() + 1;
+  public curYear: number = this.todayDate.getFullYear();
+  public twelveMonths: any = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
    'August', 'September', 'October', 'November', 'December'];
   monthString = this.twelveMonths[this.curMonth - 1];
 
@@ -48,13 +48,13 @@ export class CalendarService {
    * initials shown atop the 7 columns of the calendar.
    */
 
-  public buildCal(todayDate, month, year, twelveMonths) {
-    console.log('inside buildCal')
+  public buildCal() {
     try {
       const lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      const firstDayOfYear = new Date(year, month - 1, 1);
+      const firstDayOfYear = new Date(this.curYear, this.curMonth - 1, 1);
       const dayOne = firstDayOfYear.getDay() + 1;
-      const scanForToday = (year === todayDate.getFullYear() && month === todayDate.getMonth() + 1 ) ? todayDate.getDate() : 0 ;
+      const scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
+        this.todayDate.getDate() : 0 ;
 
       // Find the number of days for February
       lastDayOfMonths[1] =
@@ -64,9 +64,9 @@ export class CalendarService {
 
       let table =
         '<div class="main"><table class="" cols="7"' +
-        'cellpadding="0" border="0" cellspacing="0"><tr align="center">';
-
-      table += '<td colspan="7" align="center" class="">' + twelveMonths[month - 1] + ' - ' + year + '</td></tr><tr align="center">';
+        'cellpadding="0" border="0" cellspacing="0"><tr align="center">' +
+        '<td colspan="7" align="center" class="">' + this.twelveMonths[this.curMonth - 1] +
+        ' - ' + this.curYear + '</td></tr><tr align="center">';
 
       let daysOfWeek;
       for (daysOfWeek = 0; daysOfWeek < 7; daysOfWeek++) {
@@ -77,23 +77,23 @@ export class CalendarService {
 
       for (let i = 1; i <= 42; i++) {
 
-          let x = ( (i - dayOne >= 0) && ( i - dayOne < lastDayOfMonths[month - 1]) ) ? i - dayOne + 1 : '&nbsp;';
+          let x = ( (i - dayOne >= 0) && ( i - dayOne < lastDayOfMonths[this.curMonth - 1]) ) ? i - dayOne + 1 : '&nbsp;';
 
           if (x === scanForToday) {
             x = '<span class="today">' + x + '</span>';
           }
 
-          let displayMonth = month;
+          let displayMonth: any = this.curMonth;
           if (displayMonth < 10) {
             displayMonth = '0' + displayMonth;
           }
 
-          let displayDay = ( (i - dayOne >= 0) && (i - dayOne < lastDayOfMonths[month - 1]) ) ? i - dayOne + 1 : '&nbsp;';
+          let displayDay = ( (i - dayOne >= 0) && (i - dayOne < lastDayOfMonths[this.curMonth - 1]) ) ? i - dayOne + 1 : '&nbsp;';
           if (displayDay < 10) {
             displayDay = '0' + displayDay;
           }
 
-          table += '<td id="' + year + '-' + displayMonth + '-' + displayDay + '" class="days">' + x + '</td>';
+          table += '<td id="' + this.curYear + '-' + displayMonth + '-' + displayDay + '" class="days">' + x + '</td>';
           if ( ((i) % 7 === 0) && (i < 36) ) {
             table += '</tr><tr align="center">';
           }
