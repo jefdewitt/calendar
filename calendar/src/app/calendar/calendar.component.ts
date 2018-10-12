@@ -10,7 +10,7 @@ export class CalendarComponent implements OnInit {
 
   constructor(private calendarService: CalendarService, private elementRef: ElementRef, private renderer: Renderer2) { }
 
-  public calendar = this.elementRef.nativeElement.classList.contains();
+  public calendar = this.elementRef.nativeElement.querySelector('calendar');
   // public jsCal = this.renderer.
   todayDate: Date = new Date();
   // Calculate correct month on 0-based numbering
@@ -32,7 +32,8 @@ export class CalendarComponent implements OnInit {
   ];
 
   ngOnInit() {
-    console.log('inside OnInit');
+    // console.log('inside OnInit');
+    console.log('calendar', this.calendar);
     this.addCalToPage();
   }
 

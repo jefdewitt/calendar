@@ -48,7 +48,8 @@ export class CalendarService {
    * initials shown atop the 7 columns of the calendar.
    */
 
-  buildCal(todayDate, month, year, twelveMonths) {
+  public buildCal(todayDate, month, year, twelveMonths) {
+    console.log('inside buildCal')
     try {
       const lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
       const firstDayOfYear = new Date(year, month - 1, 1);
