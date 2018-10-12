@@ -1,3 +1,27 @@
+import { CalendarService } from './../services/calendar.service';
+import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
+
+@Component({
+  selector: 'app-calendar',
+  templateUrl: './calendar.component.html',
+  styleUrls: ['./calendar.component.css']
+})
+export class CalendarComponent implements OnInit {
+
+  constructor(private calendarService: CalendarService, private elementRef: ElementRef) { }
+
+  ngOnInit() {
+    this.addCalToPage();
+  }
+
+  public addCalToPage() {
+    const cal = this.elementRef.nativeElement.querySelector('.calendar');
+    cal.innerHTML = this.calendarService.addCalToPage();
+    // this.calendarService.populateCalendarDropdown(this.twelveMonths, this.curYear);
+  }
+
+}
+
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -20,9 +44,11 @@ export class CalendarService {
 
   constructor() { }
 
-  // Find an element with a specific ID (#calendar) and bind the calendar to it
-  addCalendarToPage() {
+
+  public addCalToPage() {
     // try {
+      console.log('addCalToPage called');
+      this.buildCal();
     //   const calendar = <HTMLInputElement> document.getElementById('calendar');
     //   // Builds calendar & populates option elements
     //   calendar.innerHTML = this.buildCal(this.todayDate, this.curMonth, this.curYear, this.twelveMonths);
@@ -53,8 +79,8 @@ export class CalendarService {
       const lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
       const firstDayOfYear = new Date(this.curYear, this.curMonth - 1, 1);
       const dayOne = firstDayOfYear.getDay() + 1;
-      const scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
-        this.todayDate.getDate() : 0 ;
+      const scanForToday =
+        (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ? this.todayDate.getDate() : 0 ;
 
       // Find the number of days for February
       lastDayOfMonths[1] =
