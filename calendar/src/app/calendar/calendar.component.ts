@@ -10,8 +10,10 @@ export class CalendarComponent implements OnInit {
 
   constructor(private calendarService: CalendarService, private elementRef: ElementRef) { }
 
+  public weekdays = this.calendarService.weekdays;
+
   ngOnInit() {
-    this.addCalToPage();
+    // this.addCalToPage();
   }
 
   public addCalToPage() {

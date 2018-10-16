@@ -14,6 +14,7 @@ export class CalendarService {
   public todayDate: Date = new Date();
   public curMonth: number = this.todayDate.getMonth() + 1;
   public curYear: number = this.todayDate.getFullYear();
+  public weekdays2: Array<any> = ['Mon', 'Tue']
   public weekdays: Array<any> = ['Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   public twelveMonths: any = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
    'August', 'September', 'October', 'November', 'December'];
