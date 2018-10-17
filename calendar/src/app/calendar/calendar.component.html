@@ -20,3 +20,19 @@
 <br>
 <div class="calendar"></div>
 
+<tbody class="datepicker-calendar-table-body">
+    <ng-template ngFor let-week [ngForOf]="calendar">
+      <tr role="row" class="">
+        <ng-template ngFor let-day [ngForOf]="week">
+          <td>
+            <div class="datepicker-calendar-table-body-cell-content"
+                 [ngClass]="day.class"
+                 [class.is-selected]="isSelectedDate(day)"
+                 (click)="selectDay(day)">
+              {{ day.day }}
+            </div>
+          </td>
+        </ng-template>
+      </tr>
+    </ng-template>
+  </tbody>
