@@ -1,7 +1,22 @@
-<div class="calendar">
+<div class="main">
+  <table class="" cols="7" cellpadding="0" border="0" cellspacing="0">
+    <tr align="center">
+      <td colspan="7" align="center" class=""> {{ twelveMonths[this.curMonth - 1] }} - {{ curYear }}</td>
+    </tr>
+    <tr align="center">
+        <td *ngFor="let day of weekdays">{{ day }}</td>
+    </tr>
+    <tr *ngFor="let rows of tableRows" align="center">
+        <td id="{{ curYear }} - {{ displayMonth }} - {{ displayDays }}"
+         class="days" *ngFor="let day of weekdays">{{ displayDays }}</td>
+    </tr>
+    <tr align="center">
+    </tr>
+  </table>
   <p>calendar works!</p>
-  <tr class="list">
-    <td *ngFor="let day of weekdays">{{ day }}</td>
-  </tr>
 </div>
+<br>
+<br>
+<br>
+<div class="calendar"></div>
 
