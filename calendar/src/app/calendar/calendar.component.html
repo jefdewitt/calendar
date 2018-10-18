@@ -6,33 +6,13 @@
     <tr align="center">
         <td *ngFor="let day of weekdays">{{ day }}</td>
     </tr>
-    <tr *ngFor="let rows of tableRows" align="center">
-        <td id="{{ curYear }} - {{ displayMonth }} - {{ displayDays }}"
-         class="days" *ngFor="let day of weekdays">{{ displayDays }}</td>
+    <tr *ngFor="let week of month">
+        <td *ngFor="let day of week" id="{{ curYear }} - {{ displayMonth }} - {{ displayDays }}"
+         class="days">{{ day }}</td>
     </tr>
     <tr align="center">
     </tr>
   </table>
-  <p>calendar works!</p>
 </div>
-<br>
-<br>
-<br>
-<div class="calendar"></div>
 
-<tbody class="datepicker-calendar-table-body">
-    <ng-template ngFor let-week [ngForOf]="calendar">
-      <tr role="row" class="">
-        <ng-template ngFor let-day [ngForOf]="week">
-          <td>
-            <div class="datepicker-calendar-table-body-cell-content"
-                 [ngClass]="day.class"
-                 [class.is-selected]="isSelectedDate(day)"
-                 (click)="selectDay(day)">
-              {{ day.day }}
-            </div>
-          </td>
-        </ng-template>
-      </tr>
-    </ng-template>
-  </tbody>
+<div class="calendar"></div>

@@ -31,6 +31,8 @@ export class CalendarComponent implements OnInit {
   public day;
   public displayDays: Array<any> = [];
   public tableRows: Array<any> = [];
+  public month: Array<any> = [];
+  public week: Array<any> = [];
   public scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
           this.todayDate.getDate() : 0 ;
 
@@ -97,18 +99,25 @@ export class CalendarComponent implements OnInit {
             }
 
             this.displayDays.push(this.day)
-            console.log('this.displayDays', this.displayDays)
-
-            // this.findDisplayDay(i);
   
             table += '<td id="' + this.curYear + '-'/* + displayMonth + '-'*/ + this.day + '" class="days">' + this.day  + '</td>';
-            if ( ((i) % 7 === 0) && (i < 36) ) {
+            if ( ( i % 7 === 0 ) && ( i < 36 ) ) {
               table += '</tr><tr align="center">';
               this.tableRows.push(i);
+              console.log('i', i);
+
+              let week = [];
+              week = this.displayDays;
+              this.month.push(week);
+              week = [];
+              this.displayDays = [];
+
+              
             }
-            // this.determineNumOfRows(i);
-  
-        }
+
+            
+          }
+        console.log('this.month', this.month);
         console.log('this.tableRows', this.tableRows)
         return table += '</tr></table></div>';
       }
