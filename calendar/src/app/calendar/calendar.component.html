@@ -1,16 +1,14 @@
 <div class="main">
-  <table class="" cols="7" cellpadding="0" border="0" cellspacing="0">
-    <tr align="center">
-      <td colspan="7" align="center" class=""> {{ twelveMonths[this.curMonth - 1] }} - {{ curYear }}</td>
+  <table class="" cols="7" cellpadding="0" cellspacing="0">
+    <tr>
+      <td colspan="7" class=""> {{ twelveMonths[this.curMonth - 1] }} - {{ curYear }}</td>
     </tr>
-    <tr align="center">
+    <tr>
         <td *ngFor="let day of weekdays">{{ day }}</td>
     </tr>
-    <tr *ngFor="let week of month">
-        <td *ngFor="let day of week" id="{{ curYear }} - {{ displayMonth }} - {{ displayDays }}"
-         class="days">{{ day }}</td>
-    </tr>
-    <tr align="center">
+    <tr *ngFor="let week of month"> 
+        <td *ngFor="let day of week" class="{{ checkForToday(day) }}" id="{{ curYear }}-{{ displayMonth }}-{{ formatDayValues(day) }}"
+        >{{ day }}</td>
     </tr>
   </table>
 </div>

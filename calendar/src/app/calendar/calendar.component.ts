@@ -22,11 +22,8 @@ export class CalendarComponent implements OnInit {
   public twelveMonths: any = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
    'August', 'September', 'October', 'November', 'December'];
   public lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  publicmonthString = this.twelveMonths[this.curMonth - 1];
-  // public weekdays = this.calen,mdarService.weekdays;
-       // Find the number of days for February
+  public monthString = this.twelveMonths[this.curMonth - 1];
   public firstDayOfMonth = new Date(this.curYear, this.curMonth - 1, 1);
-  // public displayMonth = this.curMonth;
   public dayTwo = this.firstDayOfMonth.getDay() + 1;
   public day;
   public displayDays: Array<any> = [];
@@ -34,7 +31,7 @@ export class CalendarComponent implements OnInit {
   public month: Array<any> = [];
   public week: Array<any> = [];
   public scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
-          this.todayDate.getDate() : 0 ;
+          this.todayDate.getDate() : 0;
 
   ngOnInit() {
     this.addCalToPage();
@@ -48,93 +45,53 @@ export class CalendarComponent implements OnInit {
   }
 
   public addCalToPage() {
-    const cal = this.elementRef.nativeElement.querySelector('.calendar');
-    cal.innerHTML = this.buildCal();
-    this.calcDaysInFeb();
+    this.buildCal();
+  }
+
+  public checkForToday(day) {
+    console.log('day', day)
+    if (day === this.scanForToday) {
+      return 'today';
+    } else {
+      return 'days';
+    }
   }
 
   public displayMonth: any  = (this.curMonth < 10) ? '0' + this.curMonth : this.curMonth;
 
-  // public findDisplayDay(i) {
-  //     this.displayDay = ( (i - this.dayTwo >= 0) && (i - this.dayTwo < this.lastDayOfMonths[this.curMonth - 1]) ) ? i - this.dayTwo + 1 : '&nbsp;';
-  //     if (this.displayDay < 10) {
-  //       this.displayDay = '0' + this.displayDay;
-  //     }
-  //   }
-  
-    public buildCal() {
-      try {
-        // const lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        // const firstDayOfMonth = new Date(this.curYear, this.curMonth - 1, 1);
-        // const dayTwo = firstDayOfMonth.getDay() + 1;
-        // const scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
-        //   this.todayDate.getDate() : 0 ;
-        
-  
-        // Find the number of days for February
-        this.calcDaysInFeb();
-  
-        let table =
-          '<div class="main"><table class="" cols="7"' +
-          'cellpadding="0" border="0" cellspacing="0"><tr align="center">' +
-          '<td colspan="7" align="center" class="">' + this.twelveMonths[this.curMonth - 1] +
-          ' - ' + this.curYear + '</td></tr><tr align="center">';
-  
-        let daysOfWeek;
-        for (daysOfWeek = 0; daysOfWeek < 7; daysOfWeek++) {
-          table += '<td class="">' + 'SMTWTFS'.substr(daysOfWeek, 1) + '</td>';
-        }
-  
-        table += '</tr><tr align="center">';
-  
-        for (let i = 1; i <= 42; i++) {
-  
-            this.day = ( (i - this.dayTwo >= 0) && ( i - this.dayTwo < this.lastDayOfMonths[this.curMonth - 1]) ) ? i - this.dayTwo + 1 : '&nbsp;';
-            if (this.day < 10) {
-              this.day = '0' + this.day;
-            }
-  
-            if (this.day === this.scanForToday) {
-              this.day = '<span class="today">' + this.day + '</span>';
-            }
-
-            this.displayDays.push(this.day)
-  
-            table += '<td id="' + this.curYear + '-'/* + displayMonth + '-'*/ + this.day + '" class="days">' + this.day  + '</td>';
-            if ( ( i % 7 === 0 ) && ( i < 36 ) ) {
-              table += '</tr><tr align="center">';
-              this.tableRows.push(i);
-              console.log('i', i);
-
-              let week = [];
-              week = this.displayDays;
-              this.month.push(week);
-              week = [];
-              this.displayDays = [];
-
-              
-            }
-
-            
-          }
-        console.log('this.month', this.month);
-        console.log('this.tableRows', this.tableRows)
-        return table += '</tr></table></div>';
-      }
-      catch(error) {
-        console.log('Unable to build calendar ' + error.message);
-      }
+  // If the date is under 10 then add a 0 for proper date formatting
+  public formatDayValues(day) {
+    if (day > 0 && day < 10) {
+      day = '0' + day;
+    } else if (day < 1) {
+      day = '00'
     }
-  
-  // public determineNumOfRows(i) {
-  //   let count = 0;
-  //   if ( ((i) % 7 === 0) && (i < 36) ) {
-  //     count++;
-  //     this.tableRows += count;
-  //   }
-  //   console.log('this.tableRows', this.tableRows)
-  // }
+    return day;
+  }
 
+  public buildCal() {
+    try {
+      this.calcDaysInFeb();
+      for (let i = 1; i <= 42; i++) {
+
+          this.day = ( (i - this.dayTwo >= 0) && ( i - this.dayTwo < this.lastDayOfMonths[this.curMonth - 1]) ) ? i - this.dayTwo + 1 : '';
+
+          // We push seven items at a time.
+          this.displayDays.push(this.day)
+
+          // If the index is divisible by 7 then it's a week and we add another
+          // week array to the month. Then, we clear out our displayDays array.
+          if ( ( i % 7 === 0 ) && ( i < 36 ) ) {
+            this.tableRows.push(i);
+            this.month.push(this.displayDays);
+            this.displayDays = [];
+          }
+        }
+    }
+    catch(error) {
+      console.log('Unable to build calendar ' + error.message);
+    }
+  }
 
     /**
      *
