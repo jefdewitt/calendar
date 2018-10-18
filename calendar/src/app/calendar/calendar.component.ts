@@ -18,7 +18,7 @@ export class CalendarComponent implements OnInit {
   public todayDate: Date = new Date();
   public curMonth: number = this.todayDate.getMonth() + 1;
   public curYear: number = this.todayDate.getFullYear();
-  public weekdays: Array<any> = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
+  public weekdays: Array<any> = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   public twelveMonths: any = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
    'August', 'September', 'October', 'November', 'December'];
   public lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -26,15 +26,27 @@ export class CalendarComponent implements OnInit {
   public firstDayOfMonth = new Date(this.curYear, this.curMonth - 1, 1);
   public dayTwo = this.firstDayOfMonth.getDay() + 1;
   public day;
-  public displayDays: Array<any> = [];
+  public weeks: Array<any> = [];
   public tableRows: Array<any> = [];
   public month: Array<any> = [];
-  public week: Array<any> = [];
+  public displayMonth;
+  public displayYear;
+  public formattedMonth;
   public scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
           this.todayDate.getDate() : 0;
+  public count = 0;
 
   ngOnInit() {
-    this.addCalToPage();
+    this.buildCal();
+  }
+
+  public setTheMonth(index) {
+    this.formattedMonth = (this.curMonth < 10) ? '0' + (this.curMonth - index) : this.curMonth - index;
+  }
+
+  public monthAndYearOnDisplay(monthIndex = 1, yearIndex = 0) {
+    this.displayMonth = this.twelveMonths[this.curMonth - monthIndex];
+    this.displayYear = this.curYear - yearIndex;
   }
 
   public calcDaysInFeb() {
@@ -44,20 +56,13 @@ export class CalendarComponent implements OnInit {
     || (this.firstDayOfMonth.getFullYear() % 400 === 0) ) ? 29 : 28;
   }
 
-  public addCalToPage() {
-    this.buildCal();
-  }
-
   public checkForToday(day) {
-    console.log('day', day)
     if (day === this.scanForToday) {
       return 'today';
     } else {
       return 'days';
     }
   }
-
-  public displayMonth: any  = (this.curMonth < 10) ? '0' + this.curMonth : this.curMonth;
 
   // If the date is under 10 then add a 0 for proper date formatting
   public formatDayValues(day) {
@@ -69,28 +74,41 @@ export class CalendarComponent implements OnInit {
     return day;
   }
 
-  public buildCal() {
+  public buildCal(monthIndex?, yearIndex?, curMonthIndex = 1) {
     try {
+      this.monthAndYearOnDisplay(monthIndex, yearIndex);
       this.calcDaysInFeb();
+      this.setTheMonth(curMonthIndex);
+      let monthToDisplay = this.curMonth - curMonthIndex;
       for (let i = 1; i <= 42; i++) {
 
-          this.day = ( (i - this.dayTwo >= 0) && ( i - this.dayTwo < this.lastDayOfMonths[this.curMonth - 1]) ) ? i - this.dayTwo + 1 : '';
+          this.day = ( (i - this.dayTwo >= 0) && ( i - this.dayTwo < this.lastDayOfMonths[monthToDisplay]) ) ? i - this.dayTwo + 1 : '';
 
           // We push seven items at a time.
-          this.displayDays.push(this.day)
+          this.weeks.push(this.day)
 
           // If the index is divisible by 7 then it's a week and we add another
-          // week array to the month. Then, we clear out our displayDays array.
+          // week array to the month. Then, we clear out our weeks array.
           if ( ( i % 7 === 0 ) && ( i < 36 ) ) {
             this.tableRows.push(i);
-            this.month.push(this.displayDays);
-            this.displayDays = [];
+            this.month.push(this.weeks);
+            this.weeks = [];
           }
         }
     }
     catch(error) {
       console.log('Unable to build calendar ' + error.message);
     }
+  }
+
+  public prevMonth() {
+    this.count++;
+    this.month = [];
+    this.buildCal(this.count + 1)
+  }
+
+  public nextMonth() {
+
   }
 
     /**
