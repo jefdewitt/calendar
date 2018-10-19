@@ -23,8 +23,9 @@ export class CalendarComponent implements OnInit {
    'August', 'September', 'October', 'November', 'December'];
   public lastDayOfMonths = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   public monthString = this.twelveMonths[this.curMonth - 1];
-  public firstDayOfMonth = new Date(this.curYear, this.curMonth - 1, 1);
-  public dayTwo = this.firstDayOfMonth.getDay() + 1;
+  public newMonthDate = new Date(this.curYear, this.curMonth - 1, 1);
+  public monthToDisplay; 
+  public weekdayThatMonthStartsOn;
   public day;
   public weeks: Array<any> = [];
   public tableRows: Array<any> = [];
@@ -37,23 +38,30 @@ export class CalendarComponent implements OnInit {
   public count = 0;
 
   ngOnInit() {
+    this.determineWeekdayThatMonthStartsOn();
+    this.monthAndYearOnDisplay(); 
     this.buildCal();
   }
 
+  public determineWeekdayThatMonthStartsOn(year = this.curYear, month = this.curMonth) {
+    let newMonthDate = new Date(year, month - 1, 1);
+    this.weekdayThatMonthStartsOn = newMonthDate.getDay() + 1;
+  }
+ 
   public setTheMonth(index) {
     this.formattedMonth = (this.curMonth < 10) ? '0' + (this.curMonth - index) : this.curMonth - index;
   }
 
-  public monthAndYearOnDisplay(monthIndex = 1, yearIndex = 0) {
+  public monthAndYearOnDisplay(yearIndex = 0, monthIndex = 1) {
     this.displayMonth = this.twelveMonths[this.curMonth - monthIndex];
     this.displayYear = this.curYear - yearIndex;
   }
 
   public calcDaysInFeb() {
     return this.lastDayOfMonths[1] =
-    ( ( (this.firstDayOfMonth.getFullYear() % 100 !== 0)
-    && (this.firstDayOfMonth.getFullYear() % 4 === 0) )
-    || (this.firstDayOfMonth.getFullYear() % 400 === 0) ) ? 29 : 28;
+    ( ( (this.newMonthDate.getFullYear() % 100 !== 0)
+    && (this.newMonthDate.getFullYear() % 4 === 0) )
+    || (this.newMonthDate.getFullYear() % 400 === 0) ) ? 29 : 28;
   }
 
   public checkForToday(day) {
@@ -74,16 +82,14 @@ export class CalendarComponent implements OnInit {
     return day;
   }
 
-  public buildCal(monthIndex = 1, yearIndex?, curMonthIndex = 1) {
+  public buildCal(monthIndex = 1) {
     try {
-      this.monthAndYearOnDisplay(monthIndex, yearIndex);
       this.calcDaysInFeb();
-      this.setTheMonth(curMonthIndex);
-      let monthToDisplay = this.curMonth - monthIndex;
+      this.monthToDisplay = this.curMonth - monthIndex;
       this.weeks = [];
       for (let i = 1; i <= 42; i++) {
 
-          this.day = ( (i - this.dayTwo >= 0) && ( i - this.dayTwo < this.lastDayOfMonths[monthToDisplay]) ) ? i - this.dayTwo + 1 : '';
+          this.day = ( (i - this.weekdayThatMonthStartsOn >= 0) && ( i - this.weekdayThatMonthStartsOn < this.lastDayOfMonths[this.monthToDisplay]) ) ? i - this.weekdayThatMonthStartsOn + 1 : '';
 
           // We push seven items at a time.
           this.weeks.push(this.day)
@@ -105,13 +111,21 @@ export class CalendarComponent implements OnInit {
   public prevMonth() {
     this.count++;
     this.month = [];
-    this.buildCal(this.count + 1)
+    this.tableRows = [];
+    this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
+    this.monthAndYearOnDisplay(0, this.count); 
+    this.buildCal(this.count);
+    this.count = 0;
   }
 
   public nextMonth() {
     this.count--;
     this.month = [];
-    this.buildCal(this.count - 1)
+    this.tableRows = [];
+    this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
+    this.monthAndYearOnDisplay(0, this.count); 
+    this.buildCal(this.count);
+    this.count = 0;
   }
 
     /**
