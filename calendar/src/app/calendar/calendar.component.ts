@@ -74,12 +74,13 @@ export class CalendarComponent implements OnInit {
     return day;
   }
 
-  public buildCal(monthIndex?, yearIndex?, curMonthIndex = 1) {
+  public buildCal(monthIndex = 1, yearIndex?, curMonthIndex = 1) {
     try {
       this.monthAndYearOnDisplay(monthIndex, yearIndex);
       this.calcDaysInFeb();
       this.setTheMonth(curMonthIndex);
-      let monthToDisplay = this.curMonth - curMonthIndex;
+      let monthToDisplay = this.curMonth - monthIndex;
+      this.weeks = [];
       for (let i = 1; i <= 42; i++) {
 
           this.day = ( (i - this.dayTwo >= 0) && ( i - this.dayTwo < this.lastDayOfMonths[monthToDisplay]) ) ? i - this.dayTwo + 1 : '';
@@ -108,7 +109,9 @@ export class CalendarComponent implements OnInit {
   }
 
   public nextMonth() {
-
+    this.count--;
+    this.month = [];
+    this.buildCal(this.count - 1)
   }
 
     /**
