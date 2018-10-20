@@ -36,6 +36,7 @@ export class CalendarComponent implements OnInit {
   public scanForToday = (this.curYear === this.todayDate.getFullYear() && this.curMonth === this.todayDate.getMonth() + 1 ) ?
           this.todayDate.getDate() : 0;
   public count = 0;
+  public adjustedCount;
 
   ngOnInit() {
     this.determineWeekdayThatMonthStartsOn();
@@ -96,12 +97,13 @@ export class CalendarComponent implements OnInit {
 
           // If the index is divisible by 7 then it's a week and we add another
           // week array to the month. Then, we clear out our weeks array.
-          if ( ( i % 7 === 0 ) && ( i < 36 ) ) {
+          if ( ( i % 7 === 0 ) ) {
             this.tableRows.push(i);
             this.month.push(this.weeks);
             this.weeks = [];
           }
         }
+        // this.tableRows.push(1)
     }
     catch(error) {
       console.log('Unable to build calendar ' + error.message);
@@ -113,9 +115,8 @@ export class CalendarComponent implements OnInit {
     this.month = [];
     this.tableRows = [];
     this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
-    this.monthAndYearOnDisplay(0, this.count); 
-    this.buildCal(this.count);
-    this.count = 0;
+    this.monthAndYearOnDisplay(0, this.count + 1); 
+    this.buildCal(this.count + 1);
   }
 
   public nextMonth() {
@@ -123,33 +124,11 @@ export class CalendarComponent implements OnInit {
     this.month = [];
     this.tableRows = [];
     this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
-    this.monthAndYearOnDisplay(0, this.count); 
-    this.buildCal(this.count);
-    this.count = 0;
+    // Account for 0-based index error for setting months.
+    this.adjustedCount = (this.count === -1) ? this.adjustedCount = 0 : this.adjustedCount = this.count + 1;
+    this.monthAndYearOnDisplay(0, this.adjustedCount ); 
+    this.buildCal(this.adjustedCount);
   }
-
-    /**
-     *
-     * @param twelveMonths
-     * @param curYear
-     *
-     * Provide an array of months and the current year to populate the 
-     * calendar dropdown menu.
-     */
-  
-    populateCalendarDropdown(twelveMonths, curYear) {
-      // try {
-      //   this.options = [];
-      //   for (let i=0; i<12; i++) {//display option for 12 months of the year
-      //     let opt = twelveMonths[i];
-      //     this.options.push(opt);
-      //   }
-      //   return this.options;
-      // }
-      // catch(error) {
-      //   console.log('Unable to populate calendar dropdown ' + error.message);
-      // }
-    }
   
     resetCheckboxes() {
       // let minuteCheckbox = <HTMLInputElement> document.getElementById("minutes");
