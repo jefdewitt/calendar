@@ -114,6 +114,7 @@ export class CalendarComponent implements OnInit {
     this.count++;
     this.month = [];
     this.tableRows = [];
+    this.checkForYearRollover(this.curMonth, this.count);
     this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
     this.monthAndYearOnDisplay(0, this.count + 1); 
     this.buildCal(this.count + 1);
@@ -123,6 +124,7 @@ export class CalendarComponent implements OnInit {
     this.count--;
     this.month = [];
     this.tableRows = [];
+    this.checkForYearRollover(this.curMonth, this.count);
     this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
     // Account for 0-based index error for setting months.
     this.adjustedCount = (this.count === -1) ? this.adjustedCount = 0 : this.adjustedCount = this.count + 1;
@@ -130,26 +132,19 @@ export class CalendarComponent implements OnInit {
     this.buildCal(this.adjustedCount);
   }
   
-    resetCheckboxes() {
-      // let minuteCheckbox = <HTMLInputElement> document.getElementById("minutes");
-      // let hourCheckbox = <HTMLInputElement> document.getElementById("hours");
-      // minuteCheckbox.checked = true;
-      // minuteCheckbox.checked = false;
+  public checkForYearRollover (month: number, count: number) {
+    if (month - count > 12) {
+        this.curYear++;
+        this.curMonth = 1;
+        this.count = 0;
+    } else if (month - count < 1) {
+      this.curYear--;
+      this.curMonth = 12;
+      this.count = 0;
+    } else {
+        // this.month = increment ? this.month + 1  : this.month - 1;
     }
-  
-    // Rebuild calendar when a new month is selected from the dropdown
-    updateCalendarMonth($event) {
-      // try {
-      //   var theMonth = parseInt($event.target.selectedIndex) + 1;
-      //   var updatedMonth=this.buildCal(this.todayDate, theMonth, this.curYear, this.twelveMonths);
-      //   document.getElementById("calendar").innerHTML = updatedMonth;
-      //   this.addDateSpan();
-      //   this.resetCheckboxes();
-      // }
-      // catch(error) {
-      //   console.log('Unable to update calendar month ' + error.message);
-      // }
-    }
+  }  
   
     // Add a span that contains the time completed for the date displayed
     addDateSpan() {
