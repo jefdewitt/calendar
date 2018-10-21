@@ -10,8 +10,8 @@
           <td *ngFor="let day of weekdays">{{ day }}</td>
       </tr>
       <tr *ngFor="let week of month"> 
-          <td *ngFor="let day of week" class="{{ checkForToday(day) }}" id="{{ curYear }}-{{ formattedMonth }}-{{ formatDayValues(day) }}"
-          >{{ day }}</td>
+          <td *ngFor="let day of week" class="{{ checkForToday(day) }}" id="{{ curYear }}-{{ formatSingleDigitValues(monthToDisplay + 1) }}-{{ formatSingleDigitValues(day) }}"
+          >{{ day }}<span *ngIf="" class="timeStamp-{{  }}">{{ }}</span></td>
       </tr>
     </tbody>
   </table>

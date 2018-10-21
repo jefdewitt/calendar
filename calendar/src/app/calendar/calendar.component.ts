@@ -44,14 +44,15 @@ export class CalendarComponent implements OnInit {
     this.buildCal();
   }
 
+  // This determines what cell in first row the month starts on (1-7)
   public determineWeekdayThatMonthStartsOn(year = this.curYear, month = this.curMonth) {
     let newMonthDate = new Date(year, month - 1, 1);
     this.weekdayThatMonthStartsOn = newMonthDate.getDay() + 1;
   }
  
-  public setTheMonth(index) {
-    this.formattedMonth = (this.curMonth < 10) ? '0' + (this.curMonth - index) : this.curMonth - index;
-  }
+  // public setTheMonth(index) {
+  //   this.formattedMonth = (this.curMonth < 10) ? '0' + (this.curMonth - index) : this.curMonth - index;
+  // }
 
   public monthAndYearOnDisplay(yearIndex = 0, monthIndex = 1) {
     this.displayMonth = this.twelveMonths[this.curMonth - monthIndex];
@@ -74,13 +75,13 @@ export class CalendarComponent implements OnInit {
   }
 
   // If the date is under 10 then add a 0 for proper date formatting
-  public formatDayValues(day) {
-    if (day > 0 && day < 10) {
-      day = '0' + day;
-    } else if (day < 1) {
-      day = '00'
+  public formatSingleDigitValues(value) {
+    if (value > 0 && value < 10) {
+      value = '0' + value;
+    } else if (value < 1) {
+      value = '00'
     }
-    return day;
+    return value;
   }
 
   public buildCal(monthIndex = 1) {
@@ -103,7 +104,6 @@ export class CalendarComponent implements OnInit {
             this.weeks = [];
           }
         }
-        // this.tableRows.push(1)
     }
     catch(error) {
       console.log('Unable to build calendar ' + error.message);
@@ -138,11 +138,9 @@ export class CalendarComponent implements OnInit {
         this.curMonth = 1;
         this.count = 0;
     } else if (month - count < 1) {
-      this.curYear--;
-      this.curMonth = 12;
-      this.count = 0;
-    } else {
-        // this.month = increment ? this.month + 1  : this.month - 1;
+        this.curYear--;
+        this.curMonth = 12;
+        this.count = 0;
     }
   }  
   
