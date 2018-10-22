@@ -4,7 +4,8 @@
     align-items: center;
 }
 
-thead {
+thead,
+td {
     position: relative;
 }
 
@@ -25,4 +26,11 @@ thead {
 .arrow.right {
     right: 10px;
     transform: rotate(135deg);
+}
+
+label[class^="timeStamp"] {
+    font-size: 8px;
+    color: red;
+    position: absolute;
+        left: 75%;
 }

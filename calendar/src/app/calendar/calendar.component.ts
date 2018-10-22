@@ -1,6 +1,15 @@
 import { CalendarService } from './services/calendar.service';
 import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 
+// interface monthModel {
+//   index: any;
+//   weeks: Array<any>;
+// }
+// interface WeekDay {
+//   date: any,
+//   minutes: number
+// }
+
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
@@ -8,13 +17,13 @@ import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
 })
 export class CalendarComponent implements OnInit {
 
-  constructor(private calendarService: CalendarService, private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef) { }
 
-  selector: any;
-  dateFromCal: string;
-  minutesFromCal: string;
-  hoursSelected: boolean;
-  options: Array<any>;
+  // selector: any;
+  // dateFromCal: string;
+  // minutesFromCal: string;
+  // hoursSelected: boolean;
+  // options: Array<any>;
   public todayDate: Date = new Date();
   public curMonth: number = this.todayDate.getMonth() + 1;
   public curYear: number = this.todayDate.getFullYear();
@@ -26,10 +35,13 @@ export class CalendarComponent implements OnInit {
   public newMonthDate = new Date(this.curYear, this.curMonth - 1, 1);
   public monthToDisplay; 
   public weekdayThatMonthStartsOn;
-  public day;
   public weeks: Array<any> = [];
   public tableRows: Array<any> = [];
-  public month: Array<any> = [];
+  public day;
+  public month = {
+    index: '',
+    weeks: []
+  };
   public displayMonth;
   public displayYear;
   public formattedMonth;
@@ -37,6 +49,7 @@ export class CalendarComponent implements OnInit {
           this.todayDate.getDate() : 0;
   public count = 0;
   public adjustedCount;
+  public test = true;
 
   ngOnInit() {
     this.determineWeekdayThatMonthStartsOn();
@@ -49,10 +62,6 @@ export class CalendarComponent implements OnInit {
     let newMonthDate = new Date(year, month - 1, 1);
     this.weekdayThatMonthStartsOn = newMonthDate.getDay() + 1;
   }
- 
-  // public setTheMonth(index) {
-  //   this.formattedMonth = (this.curMonth < 10) ? '0' + (this.curMonth - index) : this.curMonth - index;
-  // }
 
   public monthAndYearOnDisplay(yearIndex = 0, monthIndex = 1) {
     this.displayMonth = this.twelveMonths[this.curMonth - monthIndex];
@@ -88,11 +97,17 @@ export class CalendarComponent implements OnInit {
     try {
       this.calcDaysInFeb();
       this.monthToDisplay = this.curMonth - monthIndex;
+      this.month.index = this.monthToDisplay;
       this.weeks = [];
       for (let i = 1; i <= 42; i++) {
 
-          this.day = ( (i - this.weekdayThatMonthStartsOn >= 0) && ( i - this.weekdayThatMonthStartsOn < this.lastDayOfMonths[this.monthToDisplay]) ) ? i - this.weekdayThatMonthStartsOn + 1 : '';
+          const firstDay = ( (i - this.weekdayThatMonthStartsOn >= 0) && ( i - this.weekdayThatMonthStartsOn < this.lastDayOfMonths[this.monthToDisplay]) ) ? i - this.weekdayThatMonthStartsOn + 1 : '';
 
+          this.day = {
+           date: firstDay,
+           minutes: this.apiToPopCalWithTime(firstDay)
+          }
+          
           // We push seven items at a time.
           this.weeks.push(this.day)
 
@@ -100,7 +115,7 @@ export class CalendarComponent implements OnInit {
           // week array to the month. Then, we clear out our weeks array.
           if ( ( i % 7 === 0 ) ) {
             this.tableRows.push(i);
-            this.month.push(this.weeks);
+            this.month.weeks.push(this.weeks);
             this.weeks = [];
           }
         }
@@ -110,22 +125,24 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  public prevMonth() {
-    this.count++;
-    this.month = [];
+  public resetAndChecks() {
+    this.month.index = '';
+    this.month.weeks = [];
     this.tableRows = [];
     this.checkForYearRollover(this.curMonth, this.count);
     this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
+  }
+
+  public prevMonth() {
+    this.count++;
+    this.resetAndChecks();
     this.monthAndYearOnDisplay(0, this.count + 1); 
     this.buildCal(this.count + 1);
   }
 
   public nextMonth() {
     this.count--;
-    this.month = [];
-    this.tableRows = [];
-    this.checkForYearRollover(this.curMonth, this.count);
-    this.determineWeekdayThatMonthStartsOn(this.curYear, this.curMonth - this.count);
+    this.resetAndChecks();
     // Account for 0-based index error for setting months.
     this.adjustedCount = (this.count === -1) ? this.adjustedCount = 0 : this.adjustedCount = this.count + 1;
     this.monthAndYearOnDisplay(0, this.adjustedCount ); 
@@ -143,34 +160,61 @@ export class CalendarComponent implements OnInit {
         this.count = 0;
     }
   }  
+
+
+public apiToPopCalWithTime(day) {
+  const selectedTrack =
+  {
+    name: "test1",
+    selected: true,
+    time: "100",
+    dates: 
+    [
+      {
+          recordedDate: "2018-02-19",
+          recordedMinutes: 33
+      },
+      {
+          recordedDate: "2018-10-21",
+          recordedMinutes: 42
+      }
+    ]
+  }
+  // use goal service to get localStorage object
+  // var selectedTrack = this.goalTrackService.findSelectedTrack();
+
+  const compareDate = this.curYear + '-' + this.formatSingleDigitValues(this.curMonth) + '-' + this.formatSingleDigitValues(day);
   
-    // Add a span that contains the time completed for the date displayed
-    addDateSpan() {
-    //   try {
-    //     let calendarMenu = <HTMLInputElement> document.getElementById("calendar-menu");
-    //     if (calendarMenu) {
-    //       const main = document.querySelector('.main:last-of-type');
-    //       var selectedTrack = this.goalTrackService.findSelectedTrack();
+  for (let i=0; i<selectedTrack['dates'].length; i++) {
+
+      var recordedDate = selectedTrack['dates'][i].recordedDate;
+      var recordedMinutes = selectedTrack['dates'][i].recordedMinutes;
+
+      if (compareDate === recordedDate) {
+        return recordedMinutes;
+      }
+  }
+}
+
+public updateStorage(date, time) {
+    console.log(date, time);
+
+  // use goal service to get localStorage object
+  // var selectedTrack = this.goalTrackService.findSelectedTrack();
+  var selectedTrack = '';
+
+  const compareDate = this.curYear + '-' + this.formatSingleDigitValues(this.curMonth) + '-' + this.formatSingleDigitValues(date);
   
-    //       for (let i=0; i<selectedTrack['dates'].length; i++) {
-  
-    //           var recordedDate = selectedTrack['dates'][i].recordedDate;
-    //           var recordedMinutes = selectedTrack['dates'][i].recordedMinutes;
-    //           var dataCell = document.getElementById(recordedDate);
-  
-    //           if( dataCell ){
-    //               var para = document.createElement("span");
-    //               para.classList.add('timeStamp-' + recordedDate);
-    //               var node = document.createTextNode(recordedMinutes);
-    //               para.appendChild(node);
-    //               dataCell.appendChild(para);
-    //           }
-    //         }
-    //       }
-    //     }
-    //     catch(error) {
-    //       console.log('Unable to add span to calendar cells ' + error.message);
-    //     }
-    }
+  for (let i=0; i<selectedTrack['dates'].length; i++) {
+
+      var recordedDate = selectedTrack['dates'][i].recordedDate;
+      var recordedMinutes = selectedTrack['dates'][i].recordedMinutes;
+
+      if (compareDate === recordedDate) {
+        // use goal track service to set localStorage object
+        // localStorage.setItem(this.selected['name'], JSON.stringify(this.selected));
+      }
+  }
+}
 
 }
